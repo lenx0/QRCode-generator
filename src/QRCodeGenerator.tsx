@@ -10,6 +10,9 @@ const QRCodeGenerator: React.FC = () => {
     return storedCodes ? JSON.parse(storedCodes) : []
   })
   const [showHistory, setShowHistory] = useState<boolean>(false)
+  const [hasHistory, setHasHistory] = useState<boolean>(
+    qrCodesHistory.length > 0
+  )
   const [historyLabelBtn, setHistoryLabelBtn] = useState<string>('')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,11 +21,15 @@ const QRCodeGenerator: React.FC = () => {
 
   useEffect(() => {
     if (showHistory) {
-      setHistoryLabelBtn('ocultar historico')
+      setHistoryLabelBtn('hide history')
     } else {
-      setHistoryLabelBtn('exibir historico')
+      setHistoryLabelBtn('show history')
     }
   }, [historyLabelBtn, showHistory])
+
+  useEffect(() => {
+    setHasHistory(qrCodesHistory.length > 0)
+  }, [qrCodesHistory])
 
   const generateQRCode = () => {
     setQrCodeValue(inputText)
@@ -45,27 +52,31 @@ const QRCodeGenerator: React.FC = () => {
       className='qrcode-container'
       style={{ textAlign: 'center', marginTop: '50px' }}
     >
-      <h1>Gerador de QR Code</h1>
+      <h1>QRCode Generator</h1>
       <input
         type='text'
         value={inputText}
         onChange={handleChange}
-        placeholder='Digite o texto ou URL'
+        placeholder='Put your text or URL'
       />
       <br />
       <button onClick={generateQRCode} style={{ padding: '10px 20px' }}>
-        Gerar QR Code
+        generate
       </button>
-      <div style={{ padding: 5 }}>
-        <button onClick={toggleHistory}>{historyLabelBtn}</button>
-      </div>
-      <div style={{ marginTop: '10px' }}>
-        <button onClick={clearHistory}>Apagar Histórico</button>
-      </div>
-      <div style={{ marginTop: '30px' }}>
-        {qrCodeValue && <QRCode value={qrCodeValue} />}
-      </div>
-      {showHistory && <QRCodeHistory qrCodes={qrCodesHistory} />}
+      {hasHistory && (
+        <>
+          <div style={{ marginTop: '10px' }}>
+            <button onClick={toggleHistory}>{historyLabelBtn}</button>
+          </div>
+          <div style={{ marginTop: '10px' }}>
+            <button onClick={clearHistory}>clear History</button>
+          </div>
+          <div style={{ marginTop: '30px' }}>
+            {qrCodeValue && <QRCode value={qrCodeValue} />}
+          </div>
+          {showHistory && <QRCodeHistory qrCodes={qrCodesHistory} />}
+        </>
+      )}
     </div>
   )
 }
