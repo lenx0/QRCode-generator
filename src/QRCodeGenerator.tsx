@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import QRCode from 'qrcode.react'
+import QRCodeHistory from './QRCodeHistory'
 
 const QRCodeGenerator: React.FC = () => {
   const [inputText, setInputText] = useState<string>('')
@@ -8,16 +9,35 @@ const QRCodeGenerator: React.FC = () => {
     const storedCodes = localStorage.getItem('qrcodes')
     return storedCodes ? JSON.parse(storedCodes) : []
   })
+  const [showHistory, setShowHistory] = useState<boolean>(false)
+  const [historyLabelBtn, setHistoryLabelBtn] = useState<string>('')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputText(e.target.value)
   }
+
+  useEffect(() => {
+    if (showHistory) {
+      setHistoryLabelBtn('ocultar historico')
+    } else {
+      setHistoryLabelBtn('exibir historico')
+    }
+  }, [historyLabelBtn, showHistory])
 
   const generateQRCode = () => {
     setQrCodeValue(inputText)
     const updatedHistory = [...qrCodesHistory, inputText]
     setQrCodesHistory(updatedHistory)
     localStorage.setItem('qrcodes', JSON.stringify(updatedHistory))
+  }
+
+  const toggleHistory = () => {
+    setShowHistory(!showHistory)
+  }
+
+  const clearHistory = () => {
+    localStorage.removeItem('qrcodes')
+    setQrCodesHistory([])
   }
 
   return (
@@ -33,27 +53,19 @@ const QRCodeGenerator: React.FC = () => {
         placeholder='Digite o texto ou URL'
       />
       <br />
-      <button
-        onClick={generateQRCode}
-        style={{ padding: '10px 20px' }}
-      >
+      <button onClick={generateQRCode} style={{ padding: '10px 20px' }}>
         Gerar QR Code
       </button>
       <div style={{ padding: 5 }}>
-        <button>Historico</button>
+        <button onClick={toggleHistory}>{historyLabelBtn}</button>
+      </div>
+      <div style={{ marginTop: '10px' }}>
+        <button onClick={clearHistory}>Apagar Histórico</button>
       </div>
       <div style={{ marginTop: '30px' }}>
         {qrCodeValue && <QRCode value={qrCodeValue} />}
       </div>
-      <div>
-        <h2>QRCodes anteriores</h2>
-        {qrCodesHistory.map((code, index) => (
-          <div key={index} style={{ marginBottom: '10px' }}>
-            <QRCode value={code} />
-            <p>{code}</p>
-          </div>
-        ))}
-      </div>
+      {showHistory && <QRCodeHistory qrCodes={qrCodesHistory} />}
     </div>
   )
 }
