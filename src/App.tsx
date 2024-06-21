@@ -1,13 +1,13 @@
-import QRCode from "./QRCode"
-import "./App.css"
-import Footer from "./Components/Footer"
+import QRCode from './QRCode'
+import './App.css'
+import Footer from './Components/Footer'
 
-function App() {
+function App () {
   return (
-    <>
-    <QRCode />
-    <Footer />
-    </>
+    <div className='app-container'>
+      <QRCode />
+      <Footer />
+    </div>
   )
 }
 

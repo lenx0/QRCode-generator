@@ -13,6 +13,18 @@ body {
   box-sizing: border-box;
 }
 
+.app-container {
+  display: flex;
+  justify-content: center;
+}
+
+.qrcode-container {
+  width: 50%;
+  padding: 40px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+
 h1 {
   color: #333;
   font-weight: 700;
